@@ -5,11 +5,29 @@ import { Menu, Input, Row, Col } from 'antd';
 import { useSelector } from 'react-redux';
 import UserProfile from '../components/UserProfile';
 import LoginForm from '../components/LoginForm';
+import { createGlobalStyle } from 'styled-components';
+
+// gutter로 인해 가로 스크롤이 생기는 문제를 해결하기 위한 스타일링
+const Global = createGlobalStyle`
+  .ant-row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  
+  .ant-col:first-child {
+      padding-left: 0 !important;
+  }
+  
+  .ant-col:last-child {
+    padding-right: 0 !important;
+  }
+`;
 
 const AppLayout = ({ children }) => {
   const { isLoggedIn } = useSelector(state => state.user);
   return (
     <div>
+      <Global />
       <Menu mode="horizontal">
         <Menu.Item key="home">
           <Link href="/"><a>파랑 채팅</a></Link>
