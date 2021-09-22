@@ -57,8 +57,8 @@ const PostImages = ({ images }) => {
   )
 }
 
-PostImages.PropTypes = {
-  images: PropTypes.arrayOf(PropTypes.obejct),
+PostImages.propTypes = {
+  images: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default PostImages

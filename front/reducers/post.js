@@ -42,7 +42,7 @@ export const initialState = {
   postAdded: false,
 }
 
-export const ADD_POST = 'ADD_POST';
+export const ADD_POST = 'ADD_POST_REQUEST';
 
 const dummyPost = {
   id: 2,

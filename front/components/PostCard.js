@@ -87,7 +87,7 @@ PostCard.propTypes = {
     createdAt: PropTypes.object,
     Comments: PropTypes.arrayOf(PropTypes.any),
     Images: PropTypes.arrayOf(PropTypes.any),
-  }),
+  }).isRequired,
 };
 
 export default PostCard
