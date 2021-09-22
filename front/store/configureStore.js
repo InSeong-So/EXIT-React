@@ -4,8 +4,14 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 import reducer from '../reducers';
 
+// 이렇게 redux-devtools-extension을 대체해도 된다.
+const loggerMiddleware = ({ dispatch, getState }) => (next) => (action) => {
+  console.log(action);
+  return next(action);
+};
+
 const configureStore = (context) => {
-  const middlewares = [];
+  const middlewares = [loggerMiddleware];
   const enhancer = process.env.NODE_ENV === 'production'
     ? compose(applyMiddleware(...middlewares))
     : composeWithDevTools(
