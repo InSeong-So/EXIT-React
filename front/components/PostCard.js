@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react'
+import PostImages from './PostImages'
+import CommentForm from './CommentForm';
+import PostCardContent from './PostCardContent'
 import { Card, Popover, Button, Avatar, List, Comment } from 'antd';
 import { EllipsisOutlined, HeartOutlined, MessageOutlined, RetweetOutlined, HeartTwoTone } from '@ant-design/icons'
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import PostImages from './PostImages'
-import CommentForm from './CommentForm';
 import styled from 'styled-components';
 
 const CardWrapper = styled.div`
@@ -52,12 +53,12 @@ const PostCard = ({ post }) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFormOpened && (
         <div>
-          <CommentForm post={post}/>
+          <CommentForm post={post} />
           <List
             header={`${post.Comments.length}개의 댓글`}
             itemLayout="horizontal"
