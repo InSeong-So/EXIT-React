@@ -4,17 +4,17 @@ import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 
 const Home = () => {
-	const { isLogin } = useSelector(state => state.user);
-	const { mainPosts } = useSelector(state => state.post);
+  const { isLogin } = useSelector(state => state.user);
+  const { mainPosts } = useSelector(state => state.post);
 
-	return (
-		<AppLayout>
-			{isLogin && <PostForm />}
-			{mainPosts.map(post => (
-				<PostCard key={post.id} post={post} />
-			))}
-		</AppLayout>
-	);
+  return (
+    <AppLayout>
+      {isLogin && <PostForm />}
+      {mainPosts.map(post => (
+        <PostCard key={post.id} post={post} />
+      ))}
+    </AppLayout>
+  );
 };
 
 export default Home;

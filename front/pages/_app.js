@@ -9,20 +9,20 @@ import wrapper from '../store/configureStore';
 React.useLayoutEffect = useEffect;
 
 const Root = ({ Component }) => {
-	return (
-		<>
-			<Head>
-				<meta charSet="utf-8" />
-				<title>ParangChat</title>
-			</Head>
-			<Component />
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <title>ParangChat</title>
+      </Head>
+      <Component />
+    </>
+  );
 };
 
 // 안정성을 높이기 위해
 Root.propTypes = {
-	Component: PropTypes.elementType.isRequired,
+  Component: PropTypes.elementType.isRequired,
 };
 
 export default wrapper.withRedux(Root);
