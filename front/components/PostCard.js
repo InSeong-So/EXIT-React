@@ -19,6 +19,7 @@ const CardWrapper = styled.div`
 `;
 
 const PostCard = ({ post }) => {
+  console.log(post, typeof post.id);
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
@@ -96,7 +97,7 @@ const PostCard = ({ post }) => {
 
 PostCard.propTypes = {
   post: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     User: PropTypes.object,
     content: PropTypes.string,
     createdAt: PropTypes.object,
