@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import 'antd/dist/antd.css'
 import Head from 'next/head';
 
+// provider는 react-redux에 있으나 next 6에서는 provider를 생략한다.
+import wrapper from '../store/configureStore'
+
 React.useLayoutEffect = useEffect;
 
 const Root = ({ Component }) => {
@@ -22,4 +25,4 @@ Root.propTypes = {
   Component: PropTypes.elementType.isRequired,
 }
 
-export default Root
+export default wrapper.withRedux(Root);
