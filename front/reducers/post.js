@@ -56,7 +56,7 @@ const dummyPost = {
 }
 
 export const addPost = {
-  tyle: ADD_POST
+  type: ADD_POST
 }
 
 const reducer = (state = initialState, action) => {

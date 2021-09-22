@@ -20,19 +20,7 @@ const PostForm = () => {
   }, [imageInput.current]);
 
   const onSubmit = useCallback(() => {
-    dispatch({
-      type: ADD_POST,
-      data: {
-        id: 2,
-        content: '더미데이터1',
-        User: {
-          id: 1,
-          nickname: '파랑',
-        },
-        Images: [],
-        Comments: [],
-      }
-    });
+    dispatch(addPost);
     setText('');
   }, []);
 
