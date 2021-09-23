@@ -3,11 +3,13 @@ import { Button, Form, Input } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 
 import useInput from '../hooks/useInput';
-import { addPost } from '../reducers/post';
+import { ADD_POST_REQUEST } from '../reducers/post';
 
 const PostForm = () => {
   const dispatch = useDispatch();
-  const { imagePaths, isAddPostDone } = useSelector(state => state.post);
+  const { imagePaths, isAddPostDone, isAddPostLoading } = useSelector(
+    state => state.post,
+  );
   const [text, onChangeText, setText] = useInput('');
 
   useEffect(() => {
@@ -22,7 +24,10 @@ const PostForm = () => {
   }, [imageInput.current]);
 
   const onSubmit = useCallback(() => {
-    dispatch(addPost(text));
+    dispatch({
+      type: ADD_POST_REQUEST,
+      data: text,
+    });
   }, [text]);
 
   return (
@@ -40,7 +45,12 @@ const PostForm = () => {
       <div>
         <input type="file" multiple hidden ref={imageInput} />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
-        <Button type="primary" style={{ float: 'right' }} htmlType="submit">
+        <Button
+          type="primary"
+          style={{ float: 'right' }}
+          htmlType="submit"
+          loading={isAddPostLoading}
+        >
           짹짹
         </Button>
       </div>

@@ -19,7 +19,7 @@ import {
   UNFOLLOW_FAILURE,
 } from '../reducers/user';
 
-function signUpAPI(data) {
+function signupAPI(data) {
   return axios.post('/api/signup', data);
 }
 
@@ -31,7 +31,7 @@ function logoutAPI(data) {
   return axios.post('/api/Logout', data);
 }
 
-function* signUp(action) {
+function* signup(action) {
   try {
     // 서버가 없으니 주석
     // const result = yield call(LoginAPI, action.data);
@@ -49,7 +49,7 @@ function* signUp(action) {
   }
 }
 
-function* Login(action) {
+function* login(action) {
   try {
     // 서버가 없으니 주석
     // const result = yield call(LoginAPI, action.data);
@@ -67,7 +67,7 @@ function* Login(action) {
   }
 }
 
-function* Logout(action) {
+function* logout(action) {
   try {
     // 서버가 없으니 주석
     // const result = yield call(LogoutAPI, action.data);
@@ -86,15 +86,15 @@ function* Logout(action) {
 }
 
 function* watchSignup() {
-  yield takeLatest(SIGN_UP_REQUEST, signUp);
+  yield takeLatest(SIGN_UP_REQUEST, signup);
 }
 
 function* watchLogin() {
-  yield takeLatest(LOG_IN_REQUEST, Login);
+  yield takeLatest(LOG_IN_REQUEST, login);
 }
 
 function* watchLogout() {
-  yield takeLatest(LOG_OUT_REQUEST, Logout);
+  yield takeLatest(LOG_OUT_REQUEST, logout);
 }
 
 export default function* userSaga() {
