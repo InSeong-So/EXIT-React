@@ -18,9 +18,17 @@ const Signup = () => {
     state => state.user,
   );
 
+  const { me } = useSelector(state => state.user);
+
+  useEffect(() => {
+    if (!(me && me.id)) {
+      Router.replace('/');
+    }
+  }, [me && me.id]);
+
   useEffect(() => {
     if (isSignupDone) {
-      Router.push('/');
+      Router.replace('/');
     }
   }, [isSignupDone]);
 
