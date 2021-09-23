@@ -1,4 +1,5 @@
 import shortId from 'shortid';
+import faker from 'faker';
 import produce from '../util/produce';
 
 export const initialState = {
@@ -60,6 +61,34 @@ export const initialState = {
   isRemovePostDone: false, // 게시글 삭제 완료
   isRemovePostError: null, // 게시글 삭제 에러
 };
+
+initialState.mainPosts = initialState.mainPosts.concat(
+  Array(20)
+    .fill()
+    .map(() => ({
+      id: shortId.generate(),
+      User: {
+        id: shortId.generate(),
+        nickname: faker.name.findName(),
+      },
+      content: faker.lorem.paragraph(),
+      Images: [
+        {
+          src: faker.image.image(),
+        },
+      ],
+
+      Comments: [
+        {
+          User: {
+            id: shortId.generate(),
+            nickname: faker.name.findName(),
+          },
+          content: faker.lorem.sentence(),
+        },
+      ],
+    })),
+);
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
