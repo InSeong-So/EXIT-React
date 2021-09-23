@@ -3,8 +3,9 @@ const bcrypt = require('bcrypt');
 const { User, Post } = require('../models');
 const passport = require('passport');
 const router = express.Router();
+const { isLogin, isNotLogin } = require('./middlewares');
 
-router.post('/', async (req, res, next) => {
+router.post('/', isNotLogin, async (req, res, next) => {
   try {
     const exUser = await User.findOne({
       where: {
@@ -32,7 +33,7 @@ router.post('/', async (req, res, next) => {
 
 // 패스포트 전략으로 검증
 // 1. 서버에러, 2.성공객체, 3.클라이언트에러
-router.post('/login', (req, res, next) => {
+router.post('/login', isNotLogin, (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       console.log(err);
@@ -77,7 +78,7 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', isLogin, (req, res) => {
   req.logout();
   req.session = null;
   res.send('ok');
