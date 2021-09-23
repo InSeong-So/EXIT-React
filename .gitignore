@@ -104,4 +104,3 @@ dist
 .tern-port
 front/package-lock.json
 back/package-lock.json
-back/config/config.js

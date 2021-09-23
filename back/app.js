@@ -1,18 +1,38 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 const db = require('./models');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const passportConfig = require('./passport');
+const passport = require('passport');
+
+dotenv.config();
 const app = express();
+
 db.sequelize.sync().then(() => {
   console.log('db연결 성공')
-}).catch(console.error)
+}).catch(console.error);
+
+passportConfig();
 
 app.use(cors({
   origin: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// 쿠키 설정
+app.use(cookieParser());
+// 세션 설정
+app.use(session({
+  saveUninitialized: false,
+  resave: false,
+  secret: process.env.COOKIE_SECRET
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
   res.send('/');

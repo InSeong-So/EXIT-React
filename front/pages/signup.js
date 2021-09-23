@@ -3,7 +3,7 @@ import { Form, Input, Checkbox, Button } from 'antd';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { Router } from 'next/router';
+import Router from 'next/router';
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
 import { SIGN_UP_REQUEST } from '../reducers/user';
@@ -22,13 +22,13 @@ const Signup = () => {
     if (isSignupDone) {
       Router.push('/');
     }
-  }, isSignupDone);
+  }, [isSignupDone]);
 
   useEffect(() => {
     if (isSignupError) {
       console.log('이미 사용중인 이메일입니다.');
     }
-  }, isSignupError);
+  }, [isSignupError]);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');

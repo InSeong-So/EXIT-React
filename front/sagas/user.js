@@ -20,25 +20,30 @@ import {
 } from '../reducers/user';
 
 function signupAPI(data) {
-  return axios.post('http://localhost:3001/user', data);
+  return axios.post('/user', data);
 }
 
 function loginAPI(data) {
-  return axios.post('/api/Login', data);
+  return axios.post('/user/login', data);
 }
 
 function logoutAPI(data) {
   return axios.post('/api/Logout', data);
 }
 
+function followAPI(data) {
+  return axios.post('/api/follow', data);
+}
+
+function unfollowAPI(data) {
+  return axios.post('/api/unfollow', data);
+}
+
 function* signup(action) {
   try {
-    // 서버가 없으니 주석
-    const result = yield call(signupAPI, action.data);
-    console.log(result);
+    yield call(signupAPI, action.data);
     yield put({
       type: SIGN_UP_SUCCESS,
-      // data: result.data
       data: action.data,
     });
   } catch (err) {
@@ -51,13 +56,10 @@ function* signup(action) {
 
 function* login(action) {
   try {
-    // 서버가 없으니 주석
-    // const result = yield call(LoginAPI, action.data);
-    yield delay(1000);
+    const result = yield call(loginAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      // data: result.data
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -69,12 +71,9 @@ function* login(action) {
 
 function* logout(action) {
   try {
-    // 서버가 없으니 주석
-    // const result = yield call(LogoutAPI, action.data);
-    yield delay(1000);
+    const result = yield call(logoutAPI, action.data);
     yield put({
       type: LOG_OUT_SUCCESS,
-      // data: result.data
       data: action.data,
     });
   } catch (err) {
@@ -87,12 +86,9 @@ function* logout(action) {
 
 function* follow(action) {
   try {
-    // 서버가 없으니 주석
-    // const result = yield call(followAPI, action.data);
-    yield delay(1000);
+    const result = yield call(followAPI, action.data);
     yield put({
       type: FOLLOW_SUCCESS,
-      // data: result.data
       data: action.data,
     });
   } catch (err) {
@@ -105,12 +101,9 @@ function* follow(action) {
 
 function* unfollow(action) {
   try {
-    // 서버가 없으니 주석
-    // const result = yield call(unfollowAPI, action.data);
-    yield delay(1000);
+    const result = yield call(unfollowAPI, action.data);
     yield put({
       type: UNFOLLOW_SUCCESS,
-      // data: result.data
       data: action.data,
     });
   } catch (err) {
