@@ -13,6 +13,12 @@ export const initialState = {
   isChangeNicknameLoading: false, // 닉네임 변경 시도 중
   isChangeNicknameDone: false, // 닉네임 변경 완료
   isChangeNicknameError: null, // 닉네임 변경 에러
+  isFollowLoading: false, // 팔로우 시도 중
+  isFollowDone: false, // 팔로우 완료
+  isFollowError: null, // 팔로우 에러
+  isUnFollowLoading: false, // 언팔로우 시도 중
+  isUnFollowDone: false, // 언팔로우 완료
+  isUnFollowError: null, // 언팔로우 에러
   me: null,
   signUpData: {},
   LoginData: {},
@@ -143,6 +149,36 @@ const reducer = (state = initialState, action) =>
         break;
       case REMOVE_POST_TO_ME:
         draft.me.Posts = draft.me.Posts.filter(post => post.id !== action.data);
+        break;
+      case FOLLOW_REQUEST:
+        draft.isFollowLoading = true;
+        draft.isFollowDone = false;
+        draft.isFollowError = null;
+        break;
+      case FOLLOW_SUCCESS:
+        draft.isFollowLoading = false;
+        draft.me.Followings.push({ id: action.data });
+        draft.isFollowDone = true;
+        break;
+      case FOLLOW_FAILURE:
+        draft.isFollowLoading = false;
+        draft.isFollowError = action.error;
+        break;
+      case UNFOLLOW_REQUEST:
+        draft.isUnFollowLoading = true;
+        draft.isUnFollowDone = false;
+        draft.isUnFollowError = null;
+        break;
+      case UNFOLLOW_SUCCESS:
+        draft.isUnFollowLoading = false;
+        draft.me.Followings = draft.me.Followings.filter(
+          following => following.id !== action.data,
+        );
+        draft.isUnFollowDone = true;
+        break;
+      case UNFOLLOW_FAILURE:
+        draft.isUnFollowLoading = false;
+        draft.isUnFollowError = action.error;
         break;
       default:
         break;

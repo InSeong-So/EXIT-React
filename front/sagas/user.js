@@ -85,6 +85,42 @@ function* logout(action) {
   }
 }
 
+function* follow(action) {
+  try {
+    // 서버가 없으니 주석
+    // const result = yield call(followAPI, action.data);
+    yield delay(1000);
+    yield put({
+      type: FOLLOW_SUCCESS,
+      // data: result.data
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: FOLLOW_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+function* unfollow(action) {
+  try {
+    // 서버가 없으니 주석
+    // const result = yield call(unfollowAPI, action.data);
+    yield delay(1000);
+    yield put({
+      type: UNFOLLOW_SUCCESS,
+      // data: result.data
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UNFOLLOW_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
 function* watchSignup() {
   yield takeLatest(SIGN_UP_REQUEST, signup);
 }
@@ -97,6 +133,20 @@ function* watchLogout() {
   yield takeLatest(LOG_OUT_REQUEST, logout);
 }
 
+function* watchFollow() {
+  yield takeLatest(FOLLOW_REQUEST, follow);
+}
+
+function* watchUnFollow() {
+  yield takeLatest(UNFOLLOW_REQUEST, unfollow);
+}
+
 export default function* userSaga() {
-  yield all([fork(watchSignup), fork(watchLogin), fork(watchLogout)]);
+  yield all([
+    fork(watchSignup),
+    fork(watchLogin),
+    fork(watchLogout),
+    fork(watchFollow),
+    fork(watchUnFollow),
+  ]);
 }
