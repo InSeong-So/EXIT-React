@@ -1,5 +1,5 @@
-import { all, fork, takeLatest, delay, put } from 'redux-saga/effects';
-import { axios } from 'axios';
+import { all, fork, takeLatest, delay, put, call } from 'redux-saga/effects';
+import axios from 'axios';
 
 import {
   SIGN_UP_REQUEST,
@@ -20,7 +20,7 @@ import {
 } from '../reducers/user';
 
 function signupAPI(data) {
-  return axios.post('/api/signup', data);
+  return axios.post('http://localhost:3001/user', data);
 }
 
 function loginAPI(data) {
@@ -34,8 +34,8 @@ function logoutAPI(data) {
 function* signup(action) {
   try {
     // 서버가 없으니 주석
-    // const result = yield call(LoginAPI, action.data);
-    yield delay(1000);
+    const result = yield call(signupAPI, action.data);
+    console.log(result);
     yield put({
       type: SIGN_UP_SUCCESS,
       // data: result.data
