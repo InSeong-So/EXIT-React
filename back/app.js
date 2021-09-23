@@ -12,9 +12,13 @@ const passport = require('passport');
 dotenv.config();
 const app = express();
 
-db.sequelize.sync().then(() => {
-  console.log('db연결 성공')
-}).catch(console.error);
+db.sequelize.sync()
+  .then(() => {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DATABASE_CONNECTED_SUCCES');
+  })
+  .catch(() => {
+    console.error
+  });
 
 passportConfig();
 
@@ -24,12 +28,16 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // 쿠키 설정
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 // 세션 설정
 app.use(session({
   saveUninitialized: false,
   resave: false,
-  secret: process.env.COOKIE_SECRET
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
 }));
 app.use(passport.initialize());
 app.use(passport.session());

@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const { User, Post } = require('../models');
 const passport = require('passport');
-const db = require('../models');
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
@@ -80,7 +79,7 @@ router.post('/login', (req, res, next) => {
 
 router.post('/logout', (req, res) => {
   req.logout();
-  req.session.destory();
+  req.session = null;
   res.send('ok');
 });
 
