@@ -1,4 +1,4 @@
-const exporess = require('express');
+const express = require('express');
 
 const postRouter = require('./routes/post.js');
 
