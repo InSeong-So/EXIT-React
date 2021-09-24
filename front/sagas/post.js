@@ -1,13 +1,5 @@
-import {
-  all,
-  fork,
-  takeLatest,
-  delay,
-  put,
-  throttle,
-} from 'redux-saga/effects';
-import { axios } from 'axios';
-import shortId from 'shortid';
+import { all, fork, takeLatest, call, put, throttle } from 'redux-saga/effects';
+import axios from 'axios';
 
 import {
   ADD_POST_REQUEST,
@@ -27,26 +19,24 @@ import {
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from '../reducers/user';
 
 function loadPostAPI(data) {
-  return axios.post('/api/load', data);
+  return axios.post('/load', data);
 }
 
 function addPostAPI(data) {
-  return axios.post('/api/post', data);
+  return axios.post('/post', { content: data });
 }
 
 function addCommentAPI(data) {
-  return axios.post('/api/comment', data);
+  return axios.post(`/post/${data.postId}/comment`, data);
 }
 
 function removePostAPI(data) {
-  return axios.post('/api/remove', data);
+  return axios.post('/remove', data);
 }
 
 function* loadPost(action) {
   try {
-    // 서버가 없으니 주석
     // const result = yield call(loadPostAPI, action.data);
-    yield delay(1000);
     yield put({
       type: LOAD_POST_SUCCESS,
       // data: result.data
@@ -62,23 +52,17 @@ function* loadPost(action) {
 
 function* addPost(action) {
   try {
-    // 서버가 없으니 주석
-    // const result = yield call(addPostAPI, action.data);
-    yield delay(1000);
-    const id = shortId.generate();
+    const result = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
-      // data: result.data
-      data: {
-        id,
-        content: action.data,
-      },
+      data: result.data,
     });
     yield put({
       type: ADD_POST_TO_ME,
-      data: id,
+      data: result.data.id,
     });
   } catch (err) {
+    console.log(action);
     yield put({
       type: ADD_POST_FAILURE,
       data: err.response.data,
@@ -88,13 +72,10 @@ function* addPost(action) {
 
 function* addComment(action) {
   try {
-    // 서버가 없으니 주석
-    // const result = yield call(addCommentAPI, action.data);
-    yield delay(1000);
+    const result = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      // data: result.data
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -106,10 +87,7 @@ function* addComment(action) {
 
 function* removePost(action) {
   try {
-    console.log(action);
-    // 서버가 없으니 주석
     // const result = yield call(removePostAPI, action.data);
-    yield delay(1000);
     yield put({
       type: REMOVE_POST_SUCCESS,
       // data: result.data

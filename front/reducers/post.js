@@ -119,7 +119,7 @@ const reducer = (state = initialState, action) =>
       case ADD_POST_SUCCESS:
         draft.isAddPostLoading = false;
         draft.isAddPostDone = true;
-        draft.mainPosts.unshift(dummyPost(action.data));
+        draft.mainPosts.unshift(action.data);
         break;
       case ADD_POST_FAILURE:
         draft.isAddPostLoading = false;
@@ -131,8 +131,8 @@ const reducer = (state = initialState, action) =>
         draft.isAddCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS: {
-        const p = draft.mainPosts.find(post => post.id === action.data.postId);
-        p.Comments.unshift(dummyComment(action.data.content));
+        const p = draft.mainPosts.find(post => post.id === action.data.PostId);
+        p.Comments.unshift(action.data);
         draft.isAddCommentLoading = false;
         draft.isAddCommentDone = true;
         break;
