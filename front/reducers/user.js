@@ -1,6 +1,9 @@
 import produce from '../util/produce';
 
 export const initialState = {
+  isLoadMyInfoLoading: false, // 내 정보 가져오는 중
+  isLoadMyInfoDone: false, // 내 정보 가져오기 완료
+  isLoadMyInfoError: null, // 내 정보 가져오기 에러
   isSignupLoading: false, // 회원가입 시도 중
   isSignupDone: false, // 회원가입 완료
   isSignupError: null, // 회원가입 에러
@@ -24,6 +27,14 @@ export const initialState = {
   LoginData: {},
 };
 
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
+
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
@@ -31,10 +42,6 @@ export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
-
-export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
-export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
-export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
 export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
@@ -88,6 +95,20 @@ export const LogoutRequestAction = () => {
 const reducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
+      case LOAD_MY_INFO_REQUEST:
+        draft.isLoadMyInfoLoading = true;
+        draft.isLoadMyInfoDone = false;
+        draft.isLoadMyInfoError = null;
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.isLoadMyInfoLoading = false;
+        draft.me = action.data;
+        draft.isLoadMyInfoDone = true;
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.isLoadMyInfoLoading = false;
+        draft.isLoadMyInfoError = action.error;
+        break;
       case SIGN_UP_REQUEST:
         draft.isSignupLoading = true;
         draft.isSignupDone = false;

@@ -17,7 +17,16 @@ import {
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
   UNFOLLOW_FAILURE,
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
 } from '../reducers/user';
+
+// get, delete는 2번째 인자에 쿠키 설정을 해줘야 한다.
+// 공통 설정을 해줬으므로 패스
+function loadMyInfoAPI() {
+  return axios.get('/user');
+}
 
 function signupAPI(data) {
   return axios.post('/user', data);
@@ -37,6 +46,21 @@ function followAPI(data) {
 
 function unfollowAPI(data) {
   return axios.post('/user/unfollow', data);
+}
+
+function* loadMyInfo() {
+  try {
+    const result = yield call(loadMyInfoAPI);
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function* signup(action) {
@@ -113,6 +137,10 @@ function* unfollow(action) {
   }
 }
 
+function* watchLoadMyInfo() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
+}
+
 function* watchSignup() {
   yield takeLatest(SIGN_UP_REQUEST, signup);
 }
@@ -135,6 +163,7 @@ function* watchUnFollow() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadMyInfo),
     fork(watchSignup),
     fork(watchLogin),
     fork(watchLogout),

@@ -5,6 +5,42 @@ const passport = require('passport');
 const router = express.Router();
 const { isLogin, isNotLogin } = require('./middlewares');
 
+// 쿠키 정보로 새로고침 시 로그인여부 판단하여 반환하기
+router.get('/', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const getUserDataWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        attributes: {
+          exclude: ['password']
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ['id'],
+          },
+          {
+            model: User,
+            as: 'Followings',
+            attributes: ['id'],
+          },
+          {
+            model: User,
+            as: 'Followers',
+            attributes: ['id'],
+          }
+        ]
+      });
+      res.status(200).json(getUserDataWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 router.post('/', isNotLogin, async (req, res, next) => {
   try {
     const exUser = await User.findOne({
@@ -61,14 +97,17 @@ router.post('/login', isNotLogin, (req, res, next) => {
         include: [
           {
             model: Post,
+            attributes: ['id'],
           },
           {
             model: User,
             as: 'Followings',
+            attributes: ['id'],
           },
           {
             model: User,
-            as: 'Followers'
+            as: 'Followers',
+            attributes: ['id'],
           }
         ]
       });
@@ -80,8 +119,12 @@ router.post('/login', isNotLogin, (req, res, next) => {
 
 router.post('/logout', isLogin, (req, res) => {
   req.logout();
-  req.session = null;
-  res.send('ok');
+  // req.session = null;
+  req.session.destroy((err) => {
+    res.clearCookie('connect.sid');
+    // Don't redirect, just print text
+    res.send('Logout ok');
+  });
 });
 
 module.exports = router;

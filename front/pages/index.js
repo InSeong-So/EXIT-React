@@ -4,15 +4,21 @@ import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { LOAD_POST_REQUEST } from '../reducers/post';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { isLogin } = useSelector(state => state.user);
+  const { me } = useSelector(state => state.user);
   const { mainPosts, hasMorePosts, isLoadPostLoading } = useSelector(
     state => state.post,
   );
 
   useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+
+    // 몇 개 불러왔는지 데이터를 가지고 있어야 함
     dispatch({
       type: LOAD_POST_REQUEST,
     });
@@ -40,7 +46,7 @@ const Home = () => {
 
   return (
     <AppLayout>
-      {isLogin && <PostForm />}
+      {me && <PostForm />}
       {mainPosts.map(post => (
         <PostCard key={post.id} post={post} />
       ))}
