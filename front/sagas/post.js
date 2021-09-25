@@ -14,12 +14,11 @@ import {
   LOAD_POST_REQUEST,
   LOAD_POST_SUCCESS,
   LOAD_POST_FAILURE,
-  generateDummyPost,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from '../reducers/user';
 
 function loadPostAPI(data) {
-  return axios.post('/load', data);
+  return axios.get('/posts', data);
 }
 
 function addPostAPI(data) {
@@ -36,11 +35,10 @@ function removePostAPI(data) {
 
 function* loadPost(action) {
   try {
-    // const result = yield call(loadPostAPI, action.data);
+    const result = yield call(loadPostAPI, action.data);
     yield put({
       type: LOAD_POST_SUCCESS,
-      // data: result.data
-      data: generateDummyPost(10),
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -78,6 +76,7 @@ function* addComment(action) {
       data: result.data,
     });
   } catch (err) {
+    console.log(err);
     yield put({
       type: ADD_COMMENT_FAILURE,
       data: err.response.data,

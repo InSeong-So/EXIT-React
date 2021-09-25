@@ -17,9 +17,14 @@ router.post('/', isLogin, async (req, res, next) => {
         },
         {
           model: Comment,
+          include: {
+            model: User,
+            attributes: ['id', 'nickname']
+          }
         },
         {
           model: User,
+          attributes: ['id', 'nickname'],
         }
       ],
     })
@@ -42,7 +47,16 @@ router.post('/:postId/comment', isLogin, async (req, res, next) => {
       content: req.body.content,
       PostId: req.params.postId,
     });
-    res.status(201).json(comment);
+    const getCommentUser = await Comment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'nickname']
+        },
+      ]
+    })
+    res.status(201).json(getCommentUser);
   } catch (error) {
     console.log(error);
     next(error);

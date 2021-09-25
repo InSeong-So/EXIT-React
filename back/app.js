@@ -4,10 +4,12 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const db = require('./models');
-const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const postRouter = require('./routes/post');
+const postsRouter = require('./routes/posts');
 const passportConfig = require('./passport');
 const passport = require('passport');
+const morgan = require('morgan');
 
 dotenv.config();
 const app = express();
@@ -22,6 +24,7 @@ db.sequelize.sync()
 
 passportConfig();
 
+app.use(morgan('dev'));
 app.use(cors({
   origin:true,
   credentials: true,  // 쿠키 허용
@@ -47,17 +50,10 @@ app.get('/', (req, res) => {
   res.send('/');
 });
 
-app.get('/posts', (req, res) => {
-  res.json([
-    { id: 1, content: 'hello1' },
-    { id: 2, content: 'hello2' },
-    { id: 3, content: 'hello3' },
-  ])
-});
-
 // 중복되는 링크를 분리시켜 만든다.
-app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/post', postRouter);
+app.use('/posts', postsRouter);
 
 app.listen(3001, () => {
   console.log('서버 실행');

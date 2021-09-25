@@ -131,7 +131,7 @@ const reducer = (state = initialState, action) =>
         draft.isAddCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS: {
-        const p = draft.mainPosts.find(post => post.id === action.data.PostId);
+        const p = draft.mainPosts.find(post => post.id === +action.data.PostId);
         p.Comments.unshift(action.data);
         draft.isAddCommentLoading = false;
         draft.isAddCommentDone = true;
