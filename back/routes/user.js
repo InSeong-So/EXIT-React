@@ -7,6 +7,7 @@ const { isLogin, isNotLogin } = require('./middlewares');
 
 // 쿠키 정보로 새로고침 시 로그인여부 판단하여 반환하기
 router.get('/', async (req, res, next) => {
+  console.log(req.headers)
   try {
     if (req.user) {
       const getUserDataWithoutPassword = await User.findOne({
