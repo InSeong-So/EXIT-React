@@ -144,4 +144,74 @@ router.patch('/nickname', isLogin, async (req, res, next) => {
   }
 });
 
+router.get('/followers', isLogin, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if(!user){
+      res.status(403).send('가입된 사람이 아니에요!');
+    }
+    const followers = await user.getFollowers();
+    res.status(200).json(followers);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.get('/followings', isLogin, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if(!user){
+      res.status(403).send('가입된 사람이 아니에요!');
+    }
+    const followings = await user.getFollowings();
+    res.status(200).json(followings);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.patch('/:userId/follow', isLogin, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId } });
+    if(!user){
+      res.status(403).send('가입된 사람이 아니에요!');
+    }
+    await user.addFollowers(req.user.id);
+    res.status(200).json({ userId: req.params.userId});
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.delete('/:userId/follow', isLogin, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId } });
+    if(!user){
+      res.status(403).send('가입된 사람이 아니에요!');
+    }
+    await user.removeFollowers(req.user.id);
+    res.status(200).json({ userId: req.params.userId});
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.delete('/follower/:userId', isLogin, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId } });
+    if(!user){
+      res.status(403).send('가입된 사람이 아니에요!');
+    }
+    await user.removeFollowings(req.user.id);
+    res.status(200).json({ userId: req.params.userId});
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 module.exports = router;
