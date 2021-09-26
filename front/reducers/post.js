@@ -18,6 +18,9 @@ export const initialState = {
   isAddCommentLoading: false,
   isAddCommentDone: false,
   isAddCommentError: null,
+  isRetweetLoading: false,
+  isRetweetDone: false,
+  isRetweetError: null,
   isRemovePostLoading: false, // 게시글 삭제 시도 중
   isRemovePostDone: false, // 게시글 삭제 완료
   isRemovePostError: null, // 게시글 삭제 에러
@@ -73,6 +76,10 @@ export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const RETWEET_REQUEST = 'RETWEET_REQUEST';
+export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
+export const RETWEET_FAILURE = 'RETWEET_FAILURE';
 
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
@@ -184,6 +191,21 @@ const reducer = (state = initialState, action) =>
       case ADD_COMMENT_FAILURE:
         draft.isAddCommentLoading = false;
         draft.isAddCommentError = action.error;
+        break;
+      case RETWEET_REQUEST:
+        draft.isRetweetLoading = true;
+        draft.isRetweetDone = false;
+        draft.isRetweetError = null;
+        break;
+      case RETWEET_SUCCESS: {
+        draft.isRetweetLoading = false;
+        draft.isRetweetDone = true;
+        draft.mainPosts.unshift(action.data);
+        break;
+      }
+      case RETWEET_FAILURE:
+        draft.isRetweetLoading = false;
+        draft.isRetweetError = action.error;
         break;
       case REMOVE_POST_REQUEST:
         draft.isRemovePostLoading = true;
