@@ -10,6 +10,7 @@ const postsRouter = require('./routes/posts');
 const passportConfig = require('./passport');
 const passport = require('passport');
 const morgan = require('morgan');
+const path = require('path');
 
 dotenv.config();
 const app = express();
@@ -29,6 +30,7 @@ app.use(cors({
   origin:true,
   credentials: true,  // 쿠키 허용
 }));
+app.use('/images', express.static(path.join(__dirname, 'uploads')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // 쿠키 설정

@@ -136,7 +136,6 @@ const reducer = (state = initialState, action) =>
         draft.isLoadFollowersError = null;
         break;
       case LOAD_FOLLOWERS_SUCCESS: {
-        console.log(draft.me);
         draft.isLoadFollowersLoading = false;
         draft.me.Followers = action.data;
         draft.isLoadFollowersDone = true;

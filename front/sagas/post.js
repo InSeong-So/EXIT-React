@@ -5,6 +5,9 @@ import {
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
   ADD_POST_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
   ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS,
   ADD_COMMENT_FAILURE,
@@ -28,7 +31,11 @@ function loadPostAPI(data) {
 }
 
 function addPostAPI(data) {
-  return axios.post('/post', { content: data });
+  return axios.post('/post', data);
+}
+
+function uploadImagesAPI(data) {
+  return axios.post('/post/images', data);
 }
 
 function addCommentAPI(data) {
@@ -77,6 +84,22 @@ function* addPost(action) {
     console.log(action);
     yield put({
       type: ADD_POST_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.log(action);
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
       data: err.response.data,
     });
   }
@@ -155,6 +178,10 @@ function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
 
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
+
 function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
@@ -175,6 +202,7 @@ export default function* postSaga() {
   yield all([
     fork(watchLoadPost),
     fork(watchAddPost),
+    fork(watchUploadImages),
     fork(watchAddComment),
     fork(watchRemovePost),
     fork(watchLikePost),

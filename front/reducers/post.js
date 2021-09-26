@@ -12,6 +12,9 @@ export const initialState = {
   isAddPostLoading: false,
   isAddPostDone: false,
   isAddPostError: null,
+  isUploadImagesLoading: false,
+  isUploadImagesDone: false,
+  isUploadImagesError: null,
   isAddCommentLoading: false,
   isAddCommentDone: false,
   isAddCommentError: null,
@@ -60,6 +63,12 @@ export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
+
+export const REMOVE_IMAGE = 'REMOVE_IMAGE';
+
+export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
 
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
@@ -134,10 +143,31 @@ const reducer = (state = initialState, action) =>
         draft.isAddPostLoading = false;
         draft.isAddPostDone = true;
         draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
       case ADD_POST_FAILURE:
         draft.isAddPostLoading = false;
         draft.isAddPostError = action.error;
+        break;
+      case UPLOAD_IMAGES_REQUEST:
+        draft.isUploadImagesLoading = true;
+        draft.isUploadImagesDone = false;
+        draft.isUploadImagesError = null;
+        break;
+      case UPLOAD_IMAGES_SUCCESS:
+        draft.imagePaths = action.data;
+        draft.isUploadImagesLoading = false;
+        draft.isUploadImagesDone = true;
+        break;
+      case UPLOAD_IMAGES_FAILURE:
+        draft.isUploadImagesLoading = false;
+        draft.isUploadImagesError = action.error;
+        break;
+      // 동기 함수라 하나만 구성
+      case REMOVE_IMAGE:
+        draft.imagePaths = draft.imagePaths.filter(
+          (image, index) => index !== action.data,
+        );
         break;
       case ADD_COMMENT_REQUEST:
         draft.isAddCommentLoading = true;
