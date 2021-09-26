@@ -4,8 +4,12 @@ import produce from '../util/produce';
 
 export const initialState = {
   mainPosts: [],
+  singlePost: null,
   hasMorePosts: true,
   imagePaths: [],
+  isLoadPostLoading: false,
+  isLoadPostDone: false,
+  isLoadPostError: null,
   isLoadPostsLoading: false,
   isLoadPostsDone: false,
   isLoadPostsError: null,
@@ -58,6 +62,10 @@ export const generateDummyPost = number =>
         },
       ],
     }));
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
@@ -126,6 +134,20 @@ export const adComment = data => ({
 const reducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
+      case LOAD_POST_REQUEST:
+        draft.isLoadPostLoading = true;
+        draft.isLoadPostDone = false;
+        draft.isLoadPostError = null;
+        break;
+      case LOAD_POST_SUCCESS:
+        draft.isLoadPostLoading = false;
+        draft.isLoadPostDone = true;
+        draft.singlePost = action.data;
+        break;
+      case LOAD_POST_FAILURE:
+        draft.isLoadPostLoading = false;
+        draft.isLoadPostError = action.error;
+        break;
       case LOAD_POSTS_REQUEST:
         draft.isLoadPostsLoading = true;
         draft.isLoadPostsDone = false;

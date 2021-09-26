@@ -26,8 +26,15 @@ import {
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
   RETWEET_REQUEST,
+  LOAD_POST_REQUEST,
+  LOAD_POST_FAILURE,
+  LOAD_POST_SUCCESS,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from '../reducers/user';
+
+function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
 
 function loadPostsAPI(lastId) {
   return axios.get(`/posts?lastId=${lastId || 0}`);
@@ -59,6 +66,21 @@ function likePostAPI(data) {
 
 function unLikePostAPI(data) {
   return axios.delete(`/post/${data}/like`);
+}
+
+function* loadPost(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_POST_FAILURE,
+      err: err.response.data,
+    });
+  }
 }
 
 function* loadPosts(action) {
@@ -193,6 +215,10 @@ function* unLikePost(action) {
   }
 }
 
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
+
 function* watchLoadPosts() {
   yield takeLatest(LOAD_POSTS_REQUEST, loadPosts);
 }
@@ -227,6 +253,7 @@ function* watchUnLikePost() {
 
 export default function* postSaga() {
   yield all([
+    fork(watchLoadPost),
     fork(watchLoadPosts),
     fork(watchAddPost),
     fork(watchUploadImages),
