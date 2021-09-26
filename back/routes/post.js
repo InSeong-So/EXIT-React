@@ -1,5 +1,5 @@
 const express = require('express');
-const { Post, Comment, Image, User } = require('../models');
+const { Post, Comment, Image, User, Hashtag } = require('../models');
 const { isLogin } = require('./middlewares');
 const path = require('path');
 const multer = require('multer');
@@ -29,13 +29,18 @@ const upload = multer({
 
 router.post('/', isLogin, upload.none(), async (req, res, next) => {
   try {
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
       UserId: req.user.id,
       content: req.body.content,
     });
-
-    console.log(req.body.image)
-
+    if (hashtags) {
+      // findOrCreate : 있으면 등록x
+      const hashtagArray = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
+        where: { name: tag.slice(1).toLowerCase() },
+      }))); // [[노드, true], [리액트, true]]
+      await post.addHashtags(hashtagArray.map((hashtag) => hashtag[0]));
+    }
     if (req.body.image) {
       // 이미지 여러개 올리면 배열로 들어옴
       if (Array.isArray(req.body.image)) {
