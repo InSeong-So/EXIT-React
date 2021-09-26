@@ -27,7 +27,7 @@ router.post('/', isLogin, async (req, res, next) => {
           attributes: ['id', 'nickname'],
         },
         {
-          model:User,
+          model: User,
           as: 'Likers',
           attributes: ['id'],
         }
@@ -68,11 +68,17 @@ router.post('/:postId/comment', isLogin, async (req, res, next) => {
   }
 });
 
-router.delete('/post', (req, res) => {
-  res.json({ id: 1 })
+router.delete('/:postId', isLogin, async (req, res, next) => {
+  try {
+    const post = await Post.destroy({ where: { id: req.params.postId, UserId: req.user.id } });
+    res.status(200).json({ postId: req.params.postId });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 });
 
-router.patch('/:postId/like', async (req, res, next) => {
+router.patch('/:postId/like', isLogin, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {
@@ -86,7 +92,7 @@ router.patch('/:postId/like', async (req, res, next) => {
   }
 });
 
-router.delete('/:postId/like', async (req, res, next) => {
+router.delete('/:postId/like', isLogin, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {

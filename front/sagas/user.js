@@ -20,6 +20,9 @@ import {
   LOAD_MY_INFO_REQUEST,
   LOAD_MY_INFO_SUCCESS,
   LOAD_MY_INFO_FAILURE,
+  CHANGE_NICKNAME_REQUEST,
+  CHANGE_NICKNAME_SUCCESS,
+  CHANGE_NICKNAME_FAILURE,
 } from '../reducers/user';
 
 // get, delete는 2번째 인자에 쿠키 설정을 해줘야 한다.
@@ -38,6 +41,10 @@ function loginAPI(data) {
 
 function logoutAPI() {
   return axios.post('/user/logout');
+}
+
+function changeNicknameAPI(data) {
+  return axios.patch('/user/nickname', { nickname: data });
 }
 
 function followAPI(data) {
@@ -107,12 +114,27 @@ function* logout() {
   }
 }
 
+function* changeNickname(action) {
+  try {
+    const result = yield call(changeNicknameAPI, action.data);
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: CHANGE_NICKNAME_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* follow(action) {
   try {
     const result = yield call(followAPI, action.data);
     yield put({
       type: FOLLOW_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -127,7 +149,7 @@ function* unfollow(action) {
     const result = yield call(unfollowAPI, action.data);
     yield put({
       type: UNFOLLOW_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -153,6 +175,10 @@ function* watchLogout() {
   yield takeLatest(LOG_OUT_REQUEST, logout);
 }
 
+function* watchChangeNickname() {
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
+}
+
 function* watchFollow() {
   yield takeLatest(FOLLOW_REQUEST, follow);
 }
@@ -167,6 +193,7 @@ export default function* userSaga() {
     fork(watchSignup),
     fork(watchLogin),
     fork(watchLogout),
+    fork(watchChangeNickname),
     fork(watchFollow),
     fork(watchUnFollow),
   ]);
