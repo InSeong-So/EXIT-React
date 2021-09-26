@@ -26,6 +26,11 @@ router.get('/', async (req, res, next) => {
               attributes: ['id', 'nickname'],
             }
           ]
+        },
+        {
+          model: User,
+          as: 'Likers',
+          attributes: ['id']
         }
       ]
     });

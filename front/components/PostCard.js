@@ -13,7 +13,11 @@ import styled from 'styled-components';
 import PostCardContent from './PostCardContent';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
-import { REMOVE_POST_REQUEST } from '../reducers/post';
+import {
+  LIKE_POST_REQUEST,
+  REMOVE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+} from '../reducers/post';
 import FollowButton from './FollowButton';
 
 const CardWrapper = styled.div`
@@ -21,14 +25,24 @@ const CardWrapper = styled.div`
 `;
 
 const PostCard = ({ post }) => {
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const id = useSelector(state => state.user.me?.id);
+  const liked = post.Likers.find(liker => liker.id === id);
   const { isRemovePostLoading } = useSelector(state => state.post);
-  const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
-  const onToggleLike = useCallback(() => {
-    setLiked(prevState => !prevState);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
+
+  const onUnLike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
 
   const onToggleComment = useCallback(() => {
@@ -36,7 +50,7 @@ const PostCard = ({ post }) => {
   }, []);
 
   const onRemovePost = useCallback(() => {
-    dispath({
+    dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
     });
@@ -52,10 +66,10 @@ const PostCard = ({ post }) => {
             <HeartTwoTone
               twoToneColor="#eb2f96"
               key="heart"
-              onClick={onToggleLike}
+              onClick={onUnLike}
             />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="commnet" onClick={onToggleComment} />,
           <Popover
@@ -121,6 +135,7 @@ PostCard.propTypes = {
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.any),
     Images: PropTypes.arrayOf(PropTypes.any),
+    Likers: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
 };
 
