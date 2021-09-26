@@ -6,9 +6,9 @@ export const initialState = {
   mainPosts: [],
   hasMorePosts: true,
   imagePaths: [],
-  isLoadPostLoading: false,
-  isLoadPostDone: false,
-  isLoadPostError: null,
+  isLoadPostsLoading: false,
+  isLoadPostsDone: false,
+  isLoadPostsError: null,
   isAddPostLoading: false,
   isAddPostDone: false,
   isAddPostError: null,
@@ -59,9 +59,9 @@ export const generateDummyPost = number =>
       ],
     }));
 
-export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
-export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
-export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -126,20 +126,20 @@ export const adComment = data => ({
 const reducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
-      case LOAD_POST_REQUEST:
-        draft.isLoadPostLoading = true;
-        draft.isLoadPostDone = false;
-        draft.isLoadPostError = null;
+      case LOAD_POSTS_REQUEST:
+        draft.isLoadPostsLoading = true;
+        draft.isLoadPostsDone = false;
+        draft.isLoadPostsError = null;
         break;
-      case LOAD_POST_SUCCESS:
-        draft.isLoadPostLoading = false;
-        draft.isLoadPostDone = true;
-        draft.mainPosts = action.data.concat(draft.mainPosts);
-        draft.hasMorePosts = draft.mainPosts.length < 50;
+      case LOAD_POSTS_SUCCESS:
+        draft.isLoadPostsLoading = false;
+        draft.isLoadPostsDone = true;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.hasMorePosts = action.data.length === 10;
         break;
-      case LOAD_POST_FAILURE:
-        draft.isLoadPostLoading = false;
-        draft.isLoadPostError = action.error;
+      case LOAD_POSTS_FAILURE:
+        draft.isLoadPostsLoading = false;
+        draft.isLoadPostsError = action.error;
         break;
       case ADD_POST_REQUEST:
         draft.isAddPostLoading = true;
