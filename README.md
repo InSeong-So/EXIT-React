@@ -1,4 +1,3 @@
-# 리액트 프로젝트
+# EXIT
 
-1. react.js
-2. next.js
+종료
