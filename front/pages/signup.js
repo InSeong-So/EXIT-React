@@ -37,7 +37,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (isSignupError) {
-      console.log('이미 사용중인 이메일입니다.');
+      alert('이미 사용중인 이메일입니다.');
     }
   }, [isSignupError]);
 
@@ -149,7 +149,6 @@ const Signup = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   store =>
     async ({ req }) => {
-      // console.log('getServerSideProps start');
       // console.log(req.headers);
       const cookie = req ? req.headers.cookie : '';
       axios.defaults.headers.Cookie = '';
@@ -160,7 +159,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         type: LOAD_MY_INFO_REQUEST,
       });
       store.dispatch(END);
-      // console.log('getServerSideProps end');
       await store.sagaTask.toPromise();
     },
 );

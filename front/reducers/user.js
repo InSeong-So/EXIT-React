@@ -4,6 +4,9 @@ export const initialState = {
   isLoadMyInfoLoading: false, // 내 정보 가져오는 중
   isLoadMyInfoDone: false, // 내 정보 가져오기 완료
   isLoadMyInfoError: null, // 내 정보 가져오기 에러
+  isLoadUserLoading: false, // 유저 정보 가져오는 중
+  isLoadUserDone: false, // 유저 정보 가져오기 완료
+  isLoadUserError: null, // 유저 정보 가져오기 에러
   isLoadFollowersLoading: false, // 팔로워 가져오는 중
   isLoadFollowersDone: false, // 팔로워 가져오기 완료
   isLoadFollowersError: null, // 팔로워 가져오기 에러
@@ -39,6 +42,10 @@ export const initialState = {
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
 export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
 
 export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';
 export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';

@@ -1,4 +1,4 @@
-import { all, fork, takeLatest, call, put, throttle } from 'redux-saga/effects';
+import { all, fork, takeLatest, call, put } from 'redux-saga/effects';
 import axios from 'axios';
 
 import {
@@ -29,11 +29,27 @@ import {
   LOAD_POST_REQUEST,
   LOAD_POST_FAILURE,
   LOAD_POST_SUCCESS,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_FAILURE,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_USER_POSTS_SUCCESS,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from '../reducers/user';
 
 function loadPostAPI(data) {
   return axios.get(`/post/${data}`);
+}
+
+function loadUserPostsAPI(data, lastId) {
+  return axios.get(`/user/${data}?lastId=${lastId || 0}`);
+}
+
+function loadHashtagPostsAPI(data, lastId) {
+  return axios.get(
+    `/hashtag/${encodeURIComponent(data)}?lastId=${lastId || 0}`,
+  );
 }
 
 function loadPostsAPI(lastId) {
@@ -83,6 +99,36 @@ function* loadPost(action) {
   }
 }
 
+function* loadUserPosts(action) {
+  try {
+    const result = yield call(loadUserPostsAPI, action.data, action.lastId);
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
+      err: err.response.data,
+    });
+  }
+}
+
+function* loadHashtagPosts(action) {
+  try {
+    const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_HASHTAG_POSTS_FAILURE,
+      err: err.response.data,
+    });
+  }
+}
+
 function* loadPosts(action) {
   try {
     const result = yield call(loadPostsAPI, action.lastId);
@@ -110,7 +156,6 @@ function* addPost(action) {
       data: result.data.id,
     });
   } catch (err) {
-    console.log(action);
     yield put({
       type: ADD_POST_FAILURE,
       err: err.response.data,
@@ -126,7 +171,6 @@ function* uploadImages(action) {
       data: result.data,
     });
   } catch (err) {
-    console.log(action);
     yield put({
       type: UPLOAD_IMAGES_FAILURE,
       err: err.response.data,
@@ -219,6 +263,14 @@ function* watchLoadPost() {
   yield takeLatest(LOAD_POST_REQUEST, loadPost);
 }
 
+function* watchLoadUserPosts() {
+  yield takeLatest(LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+
+function* watchLoadHashtagPosts() {
+  yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
+}
+
 function* watchLoadPosts() {
   yield takeLatest(LOAD_POSTS_REQUEST, loadPosts);
 }
@@ -254,6 +306,8 @@ function* watchUnLikePost() {
 export default function* postSaga() {
   yield all([
     fork(watchLoadPost),
+    fork(watchLoadUserPosts),
+    fork(watchLoadHashtagPosts),
     fork(watchLoadPosts),
     fork(watchAddPost),
     fork(watchUploadImages),
