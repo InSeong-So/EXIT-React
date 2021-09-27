@@ -134,7 +134,7 @@ const PostCard = ({ post }) => {
             }
           >
             <div style={{ float: 'right' }}>
-              {moment(post.createdAt).format('YYYY.MM.DD')}
+              {moment(post.createdAt, 'YYYYMMDD').fromNow()}
             </div>
             <Card.Meta
               avatar={
@@ -151,7 +151,7 @@ const PostCard = ({ post }) => {
         ) : (
           <>
             <div style={{ float: 'right' }}>
-              {moment(post.createdAt).format('YYYY.MM.DD')}
+              {moment(post.createdAt, 'YYYYMMDD').fromNow()}
             </div>
             <Card.Meta
               avatar={
