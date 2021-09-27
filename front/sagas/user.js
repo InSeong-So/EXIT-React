@@ -32,7 +32,14 @@ import {
   REMOVE_FOLLOWER_REQUEST,
   REMOVE_FOLLOWER_SUCCESS,
   REMOVE_FOLLOWER_FAILURE,
+  LOAD_USER_REQUEST,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_FAILURE,
 } from '../reducers/user';
+
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
+}
 
 // get, delete는 2번째 인자에 쿠키 설정을 해줘야 한다.
 // 공통 설정을 해줬으므로 패스
@@ -74,6 +81,23 @@ function unfollowAPI(data) {
 
 function removeFollowerAPI(data) {
   return axios.delete(`/user/follower/${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    console.log('loadUserData', result.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: err.response.data,
+    });
+  }
 }
 
 function* loadMyInfo() {
@@ -225,6 +249,10 @@ function* removeFollower(action) {
   }
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
+
 function* watchLoadMyInfo() {
   yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
@@ -267,6 +295,7 @@ function* watchRemoveFollower() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadUser),
     fork(watchLoadMyInfo),
     fork(watchLoadFollowers),
     fork(watchLoadFollowings),

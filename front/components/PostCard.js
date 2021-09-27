@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, Popover, Button, Avatar, List, Comment } from 'antd';
 import {
   EllipsisOutlined,
@@ -7,9 +7,11 @@ import {
   RetweetOutlined,
   HeartTwoTone,
 } from '@ant-design/icons';
+import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import moment from 'moment';
 import PostCardContent from './PostCardContent';
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
@@ -25,12 +27,18 @@ const CardWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
+moment.locale('ko');
+
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const id = useSelector(state => state.user.me?.id);
   const liked = post.Likers.find(liker => liker.id === id);
   const { isRemovePostLoading } = useSelector(state => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
+
+  const onToggleComment = useCallback(() => {
+    setCommentFormOpened(prevState => !prevState);
+  }, []);
 
   const onLike = useCallback(() => {
     if (!id) {
@@ -51,10 +59,6 @@ const PostCard = ({ post }) => {
       data: post.id,
     });
   }, [id]);
-
-  const onToggleComment = useCallback(() => {
-    setCommentFormOpened(prevState => !prevState);
-  }, []);
 
   const onRemovePost = useCallback(() => {
     if (!id) {
@@ -129,18 +133,38 @@ const PostCard = ({ post }) => {
               )
             }
           >
+            <div style={{ float: 'right' }}>
+              {moment(post.createdAt).format('YYYY.MM.DD')}
+            </div>
             <Card.Meta
-              avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+              avatar={
+                <Link href={`/user/${post.Retweet.User.id}`}>
+                  <a>
+                    <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
               title={post.Retweet.User.nickname}
               description={<PostCardContent postData={post.Retweet.content} />}
             />
           </Card>
         ) : (
-          <Card.Meta
-            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-            title={post.User.nickname}
-            description={<PostCardContent postData={post.content} />}
-          />
+          <>
+            <div style={{ float: 'right' }}>
+              {moment(post.createdAt).format('YYYY.MM.DD')}
+            </div>
+            <Card.Meta
+              avatar={
+                <Link href={`/user/${post.User.id}`}>
+                  <a>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
+              title={post.User.nickname}
+              description={<PostCardContent postData={post.content} />}
+            />
+          </>
         )}
       </Card>
       {commentFormOpened && (
@@ -154,7 +178,13 @@ const PostCard = ({ post }) => {
               <li>
                 <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={
+                    <Link href={`/user/${item.User.id}`}>
+                      <a>
+                        <Avatar>{item.User.nickname[0]}</Avatar>
+                      </a>
+                    </Link>
+                  }
                   content={item.content}
                 />
               </li>
@@ -172,8 +202,8 @@ PostCard.propTypes = {
     User: PropTypes.object,
     content: PropTypes.string,
     createdAt: PropTypes.string,
-    Comments: PropTypes.arrayOf(PropTypes.any),
-    Images: PropTypes.arrayOf(PropTypes.any),
+    Comments: PropTypes.arrayOf(PropTypes.object),
+    Images: PropTypes.arrayOf(PropTypes.object),
     Likers: PropTypes.arrayOf(PropTypes.object),
     RetweetId: PropTypes.number,
     Retweet: PropTypes.objectOf(PropTypes.any),

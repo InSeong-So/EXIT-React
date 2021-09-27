@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { User, Post } = require('../models');
+const { Op } = require('sequelize')
+const { User, Post, Image, Comment } = require('../models');
 const passport = require('passport');
 const router = express.Router();
 const { isLogin, isNotLogin } = require('./middlewares');
@@ -193,23 +194,27 @@ router.delete('/follower/:userId', isLogin, async (req, res, next) => {
 router.get('/:userId', async (req, res, next) => { // GET /user/1
   try {
     const getUserDataWithoutPassword = await User.findOne({
-      where: { id: req.params.userId },
+      where: { id: +req.params.userId },
       attributes: {
         exclude: ['password']
       },
-      include: [{
-        model: Post,
-        attributes: ['id'],
-      }, {
-        model: User,
-        as: 'Followings',
-        attributes: ['id'],
-      }, {
-        model: User,
-        as: 'Followers',
-        attributes: ['id'],
-      }]
-    })
+      include: [
+        {
+          model: Post,
+          attributes: ['id'],
+        },
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id'],
+        },
+        {
+          model: User,
+          as: 'Followers',
+          attributes: ['id'],
+        }
+      ]
+    });
     if (getUserDataWithoutPassword) {
       const data = getUserDataWithoutPassword.toJSON();
       data.Posts = data.Posts.length; // 개인정보 침해 예방
@@ -227,7 +232,7 @@ router.get('/:userId', async (req, res, next) => { // GET /user/1
 
 router.get('/:userId/posts', async (req, res, next) => { // GET /user/1/posts
   try {
-    const where = { UserId: req.params.userId };
+    const where = { UserId: +req.params.userId };
     if (parseInt(req.query.lastId, 10)) {
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }
     }
@@ -235,32 +240,41 @@ router.get('/:userId/posts', async (req, res, next) => { // GET /user/1/posts
       where,
       limit: 10,
       order: [['createdAt', 'DESC']],
-      include: [{
-        model: User,
-        attributes: ['id', 'nickname'],
-      }, {
-        model: Image,
-      }, {
-        model: Comment,
-        include: [{
+      include: [
+        {
           model: User,
           attributes: ['id', 'nickname'],
-          order: [['createdAt', 'DESC']],
-        }],
-      }, {
-        model: User, // 좋아요 누른 사람
-        as: 'Likers',
-        attributes: ['id'],
-      }, {
-        model: Post,
-        as: 'Retweet',
-        include: [{
-          model: User,
-          attributes: ['id', 'nickname'],
-        }, {
+        },
+        {
           model: Image,
-        }]
-      }],
+        },
+        {
+          model: Comment,
+          include: [{
+            model: User,
+            attributes: ['id', 'nickname'],
+            order: [['createdAt', 'DESC']],
+          }],
+        },
+        {
+          model: User, // 좋아요 누른 사람
+          as: 'Likers',
+          attributes: ['id'],
+        },
+        {
+          model: Post,
+          as: 'Retweet',
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'nickname'],
+            },
+            {
+              model: Image,
+            }
+          ]
+        }
+      ],
     });
     res.status(200).json(posts);
   } catch (error) {

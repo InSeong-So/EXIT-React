@@ -1,12 +1,11 @@
 const express = require('express');
 const { Op } = require('sequelize');
-
 const { Post, Hashtag, Image, Comment, User } = require('../models');
-
 const router = express.Router();
 
-router.get('/:hashtag', async (req, res, next) => { // GET /hashtag/노드
+router.get('/:hashtag', async (req, res, next) => {
   try {
+    console.log(req.headers)
     const where = {};
     if (parseInt(req.query.lastId, 10)) { // 초기 로딩이 아닐 때
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10)}
@@ -45,6 +44,7 @@ router.get('/:hashtag', async (req, res, next) => { // GET /hashtag/노드
         }]
       }],
     });
+    console.log(posts)
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);

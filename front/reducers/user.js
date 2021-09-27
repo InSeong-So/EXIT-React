@@ -123,6 +123,20 @@ export const LogoutRequestAction = () => {
 const reducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
+      case LOAD_USER_REQUEST:
+        draft.isLoadUserLoading = true;
+        draft.isLoadUserError = null;
+        draft.isLoadUserDone = false;
+        break;
+      case LOAD_USER_SUCCESS:
+        draft.isLoadUserLoading = false;
+        draft.userInfo = action.data;
+        draft.isLoadUserDone = true;
+        break;
+      case LOAD_USER_FAILURE:
+        draft.isLoadUserLoading = false;
+        draft.isLoadUserError = action.error;
+        break;
       case LOAD_MY_INFO_REQUEST:
         draft.isLoadMyInfoLoading = true;
         draft.isLoadMyInfoDone = false;

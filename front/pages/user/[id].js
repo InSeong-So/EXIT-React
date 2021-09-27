@@ -16,7 +16,7 @@ const User = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = router.query;
-  const { mainPosts, hasMorePosts, loadUserPostsLoading } = useSelector(
+  const { mainPosts, hasMorePosts, isLoadPostsLoading } = useSelector(
     state => state.post,
   );
   const { userInfo } = useSelector(state => state.user);
@@ -27,7 +27,7 @@ const User = () => {
         window.pageYOffset + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 300
       ) {
-        if (hasMorePosts && !loadUserPostsLoading) {
+        if (hasMorePosts && !isLoadPostsLoading) {
           dispatch({
             type: LOAD_USER_POSTS_REQUEST,
             lastId:
@@ -107,26 +107,28 @@ const User = () => {
   );
 };
 
-export const getServerSideProps = wrapper.getServerSideProps(async context => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-  context.store.dispatch({
-    type: LOAD_USER_POSTS_REQUEST,
-    data: context.params.id,
-  });
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: LOAD_USER_REQUEST,
-    data: context.params.id,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-  return { props: {} };
-});
+export const getServerSideProps = wrapper.getServerSideProps(
+  context =>
+    async ({ req, params }) => {
+      const cookie = req ? req.headers.cookie : '';
+      axios.defaults.headers.Cookie = '';
+      if (req && cookie) {
+        axios.defaults.headers.Cookie = cookie;
+      }
+      context.dispatch({
+        type: LOAD_USER_POSTS_REQUEST,
+        data: params.id,
+      });
+      context.dispatch({
+        type: LOAD_MY_INFO_REQUEST,
+      });
+      context.dispatch({
+        type: LOAD_USER_REQUEST,
+        data: params.id,
+      });
+      context.dispatch(END);
+      await context.sagaTask.toPromise();
+    },
+);
 
 export default User;
